@@ -23,32 +23,47 @@ my-portfolio/
 
 ## Running it locally
 
-Two terminals, one per folder.
+From the repo root, two commands:
 
 ```bash
-# terminal 1 - API on http://localhost:5000
-cd server
-npm install
-npm run dev
-
-# terminal 2 - site on http://localhost:8080
-cd client
-npm install
-npm run dev
+npm install     # installs the root tooling, then client/ and server/
+npm run dev     # API on :5000 and site on :8080, in one terminal
 ```
 
-Both folders need their own `.env`; copy the matching `.env.example` and fill it in.
-`server/README.md` explains every server variable, including how to get a MongoDB URI,
-a Gmail app password, and Cloudinary keys.
+`npm run dev` starts both halves side by side with prefixed output (`[api]`, `[web]`),
+and stopping one stops the other, so `Ctrl+C` leaves nothing behind. A preflight check
+runs first and explains anything that would make startup fail - a missing `.env`, a
+missing `node_modules`, or a port still held by a previous session.
+
+Before the first run, both folders need their own `.env`; copy the matching
+`.env.example` and fill it in. `server/README.md` explains every server variable,
+including how to get a MongoDB URI, a Gmail app password, and Cloudinary keys.
+
+### Root scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Both dev servers together |
+| `npm run dev:server` / `npm run dev:client` | One half on its own |
+| `npm run stop` | Free ports 5000 and 8080 if a previous run was left behind |
+| `npm run build` | Production build of the client into `client/dist` |
+| `npm start` | Run the API alone (production mode) |
+| `npm run seed` | Seed the admin account and starter content |
+| `npm run lint` | Lint the client |
+
+You can still work inside `client/` or `server/` directly; the root scripts only
+forward to them.
 
 ## First-time database setup
 
-From `server/`:
+From the repo root:
 
 ```bash
 npm run seed:admin      # creates the admin account from ADMIN_EMAIL + ADMIN_PASSWORD_HASH
 npm run seed:content    # fills skills, projects and profile with starter content
 ```
+
+`npm run seed` runs both.
 
 ## Admin dashboard
 

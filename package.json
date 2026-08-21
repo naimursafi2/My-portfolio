@@ -1,0 +1,30 @@
+{
+  "name": "my-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio site: React client and Express/MongoDB API",
+  "scripts": {
+    "predev": "node scripts/preflight.mjs",
+    "dev": "concurrently -n api,web -c magenta,cyan -k \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "stop": "node scripts/stop.mjs",
+    "build": "npm --prefix client run build",
+    "preview": "npm --prefix client run preview",
+    "start": "npm --prefix server start",
+    "lint": "npm --prefix client run lint",
+    "test": "npm --prefix client test",
+    "seed": "npm --prefix server run seed:admin && npm --prefix server run seed:content",
+    "seed:admin": "npm --prefix server run seed:admin",
+    "seed:content": "npm --prefix server run seed:content",
+    "hash": "npm --prefix server run hash --",
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "postinstall": "npm run install:all"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

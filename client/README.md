@@ -10,6 +10,10 @@ npm run build    # production build into dist/
 npm run lint
 ```
 
+From the repo root, `npm run dev` starts this and the API together; these commands
+are for working on the frontend alone. Either way the API must be running for the
+admin dashboard to work.
+
 ## Environment
 
 Copy `.env.example` to `.env`:

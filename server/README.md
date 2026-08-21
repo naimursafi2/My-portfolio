@@ -74,9 +74,11 @@ uses; `MONGO_URI` is accepted as an alias.
    `mongodb+srv://user:pass@cluster0.xxxxx.mongodb.net/portfolio?retryWrites=true&w=majority`
 7. Paste it as `DB_URL`.
 
-If startup fails with `querySrv ECONNREFUSED`, your local DNS resolver refuses the
-SRV lookup that `mongodb+srv://` needs. Set `DNS_SERVERS=8.8.8.8,1.1.1.1` in `.env`
-and the server will resolve through those instead.
+If the SRV lookup that `mongodb+srv://` needs fails with `querySrv ECONNREFUSED`,
+your local DNS resolver is refusing to answer it. The server notices this and
+retries once through `8.8.8.8` and `1.1.1.1` on its own, logging that it did so.
+Set `DNS_SERVERS=8.8.8.8,1.1.1.1` in `.env` to pin those resolvers up front and
+skip the failed first attempt.
 
 ### Gmail app password
 
