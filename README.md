@@ -1,73 +1,91 @@
-# Welcome to your Lovable project
+# Portfolio Website
 
-## Project info
+A personal portfolio with a content-managed backend. The public site reads all of its
+content from a REST API, and the owner edits that content from a password-protected
+admin dashboard - no code changes needed.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+```
+my-portfolio/
+├── client/    React + Vite frontend (public site + admin dashboard)
+└── server/    Node.js + Express + MongoDB API
+```
 
-## How can I edit this code?
+## Stack
 
-There are several ways of editing your application.
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Vite, React Router, Tailwind CSS, sonner |
+| Backend | Node.js, Express 4, Mongoose 8 |
+| Database | MongoDB Atlas |
+| Auth | JWT (7 day expiry) + bcrypt |
+| Email | Nodemailer over Gmail SMTP |
+| Images | Cloudinary |
 
-**Use Lovable**
+## Running it locally
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Two terminals, one per folder.
 
-Changes made via Lovable will be committed automatically to this repo.
+```bash
+# terminal 1 - API on http://localhost:5000
+cd server
+npm install
+npm run dev
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# terminal 2 - site on http://localhost:8080
+cd client
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Both folders need their own `.env`; copy the matching `.env.example` and fill it in.
+`server/README.md` explains every server variable, including how to get a MongoDB URI,
+a Gmail app password, and Cloudinary keys.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## First-time database setup
 
-**Use GitHub Codespaces**
+From `server/`:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run seed:admin      # creates the admin account from ADMIN_EMAIL + ADMIN_PASSWORD_HASH
+npm run seed:content    # fills skills, projects and profile with starter content
+```
 
-## What technologies are used for this project?
+## Admin dashboard
 
-This project is built with:
+| URL | What it is |
+|---|---|
+| `/` | The public portfolio |
+| `/admin/login` | Owner login (`/login` redirects here) |
+| `/admin/dashboard` | Projects, Skills, Messages and Profile management |
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The dashboard manages:
 
-## How can I deploy this project?
+- **Projects** - add, edit, delete, reorder, upload an image or paste an image URL
+- **Skills** - add, edit, delete, reorder (names only, no percentages)
+- **Messages** - everything submitted through the contact form, with read/unread and reply
+- **Profile** - hero text, about paragraphs, contact blurb, social links
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Changes appear on the public site on its next load.
 
-## Can I connect a custom domain to my Lovable project?
+## Security
 
-Yes, you can!
+Both layers are enforced independently:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- **Backend** - `requireAuth` middleware rejects any request to a create/update/delete
+  route without a valid JWT, so the API cannot be driven by bypassing the frontend.
+  Public `GET` routes stay open for the site itself.
+- **Frontend** - `ProtectedRoute` verifies the stored token before rendering anything
+  under `/admin`, and any `401` from the API logs the session out immediately.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Also in place: bcrypt password hashing (cost 12), zod validation on every write,
+CORS limited to `CLIENT_URL`, helmet headers, rate limits on login (10 per 15 min)
+and on the contact form (5 per hour), and a honeypot field against bots.
+
+## Deploying
+
+1. **Backend** to Render or Railway - set every variable from `server/.env.example`,
+   set `CLIENT_URL` to the deployed frontend origin, and `NODE_ENV=production`.
+2. **Frontend** to Vercel or Netlify - set `VITE_API_URL` to the deployed API URL
+   including the `/api` suffix. Build command `npm run build`, output `dist`.
+3. In MongoDB Atlas, replace the `0.0.0.0/0` network rule with your host's IP range
+   once you know it.
