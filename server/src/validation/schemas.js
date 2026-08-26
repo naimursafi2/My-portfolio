@@ -16,6 +16,21 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required").max(200),
 });
 
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required").max(200),
+    newPassword: z.string().min(8, "New password must be at least 8 characters").max(200),
+    confirmNewPassword: z.string().min(1, "Please confirm the new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "New passwords do not match",
+    path: ["confirmNewPassword"],
+  })
+  .refine((data) => data.newPassword !== data.currentPassword, {
+    message: "New password must be different from the current password",
+    path: ["newPassword"],
+  });
+
 export const skillSchema = z.object({
   name: trimmed(60).min(1, "Skill name is required"),
   icon: trimmed(120).optional().default(""),

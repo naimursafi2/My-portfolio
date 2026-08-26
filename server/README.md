@@ -35,6 +35,7 @@ Base path: `/api`. Routes marked **admin** require `Authorization: Bearer <token
 | GET | `/health` | public | Liveness check |
 | POST | `/auth/login` | public | Log in, returns a JWT |
 | GET | `/auth/me` | admin | Current account |
+| POST | `/auth/change-password` | admin | Change the admin password (verifies the current one) |
 | GET | `/skills` | public | List skills |
 | POST | `/skills` | admin | Create a skill |
 | PUT | `/skills/:id` | admin | Update a skill |
@@ -105,9 +106,17 @@ dashboard can still take image URLs.
 ### Admin account
 
 `ADMIN_EMAIL` plus either `ADMIN_PASSWORD_HASH` (a bcrypt hash) or `ADMIN_PASSWORD`
-(plaintext, hashed by the seed script). To change the password later:
+(plaintext, hashed by the seed script). To change the password later, either:
 
-```bash
-npm run hash -- "your new password"   # paste the output into ADMIN_PASSWORD_HASH
-npm run seed:admin                    # apply it
-```
+- Sign in and use **Security -> Change password** in the dashboard (`POST /auth/change-password`),
+  which verifies the current password and writes the new hash straight to the database, or
+- Regenerate it from the environment:
+
+  ```bash
+  npm run hash -- "your new password"   # paste the output into ADMIN_PASSWORD_HASH
+  npm run seed:admin                    # apply it
+  ```
+
+Note that re-running `npm run seed:admin` always resets the password to whatever
+`ADMIN_PASSWORD`/`ADMIN_PASSWORD_HASH` currently holds, so update `.env` too if you
+want a dashboard-changed password to survive a reseed.

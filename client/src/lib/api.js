@@ -76,6 +76,7 @@ export const api = {
   // --- auth ---
   login: (body) => request("/auth/login", { method: "POST", body }),
   me: () => request("/auth/me", { auth: true }),
+  changePassword: (body) => request("/auth/change-password", { method: "POST", body, auth: true }),
 
   // --- admin: skills ---
   createSkill: (body) => request("/skills", { method: "POST", body, auth: true }),

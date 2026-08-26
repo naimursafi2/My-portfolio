@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Code2, Folder, Mail, User, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Code2, Folder, Mail, User, LogOut, ExternalLink, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext.jsx";
 import SkillsPanel from "@/components/admin/SkillsPanel.jsx";
 import ProjectsPanel from "@/components/admin/ProjectsPanel.jsx";
 import MessagesPanel from "@/components/admin/MessagesPanel.jsx";
 import ProfilePanel from "@/components/admin/ProfilePanel.jsx";
+import SecurityPanel from "@/components/admin/SecurityPanel.jsx";
 
 const TABS = [
   { id: "projects", label: "Projects", icon: Folder, Panel: ProjectsPanel },
   { id: "skills", label: "Skills", icon: Code2, Panel: SkillsPanel },
   { id: "messages", label: "Messages", icon: Mail, Panel: MessagesPanel },
   { id: "profile", label: "Profile", icon: User, Panel: ProfilePanel },
+  { id: "security", label: "Security", icon: ShieldCheck, Panel: SecurityPanel },
 ];
 
 const Dashboard = () => {

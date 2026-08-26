@@ -1,9 +1,9 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { login, me } from "../controllers/authController.js";
+import { login, me, changePassword } from "../controllers/authController.js";
 import { validate } from "../middleware/validate.js";
 import { requireAuth } from "../middleware/auth.js";
-import { loginSchema } from "../validation/schemas.js";
+import { loginSchema, changePasswordSchema } from "../validation/schemas.js";
 
 const router = Router();
 
@@ -16,7 +16,24 @@ const loginLimiter = rateLimit({
   message: { success: false, message: "Too many login attempts. Try again in 15 minutes." },
 });
 
+// Same guard as login: a valid token alone should not make guessing the
+// current password cheap.
+const changePasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { success: false, message: "Too many attempts. Try again in 15 minutes." },
+});
+
 router.post("/login", loginLimiter, validate(loginSchema), login);
 router.get("/me", requireAuth, me);
+router.post(
+  "/change-password",
+  requireAuth,
+  changePasswordLimiter,
+  validate(changePasswordSchema),
+  changePassword
+);
 
 export default router;

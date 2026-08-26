@@ -79,6 +79,7 @@ The dashboard manages:
 - **Skills** - add, edit, delete, reorder (names only, no percentages)
 - **Messages** - everything submitted through the contact form, with read/unread and reply
 - **Profile** - hero text, about paragraphs, contact blurb, social links
+- **Security** - change the admin password (current password must be verified first)
 
 Changes appear on the public site on its next load.
 
@@ -93,8 +94,9 @@ Both layers are enforced independently:
   under `/admin`, and any `401` from the API logs the session out immediately.
 
 Also in place: bcrypt password hashing (cost 12), zod validation on every write,
-CORS limited to `CLIENT_URL`, helmet headers, rate limits on login (10 per 15 min)
-and on the contact form (5 per hour), and a honeypot field against bots.
+CORS limited to `CLIENT_URL`, helmet headers, rate limits on login and password
+changes (10 per 15 min each) and on the contact form (5 per hour), and a honeypot
+field against bots.
 
 ## Deploying
 
