@@ -1,4 +1,4 @@
-import { Mail, Github, Linkedin, Send, Loader2 } from "lucide-react";
+import { Mail, Send, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api.js";
@@ -32,8 +32,6 @@ const Contact = () => {
     }
   };
 
-  const github = profile?.github || "https://github.com";
-  const linkedin = profile?.linkedin || "https://linkedin.com";
   const blurb =
     profile?.contactBlurb ||
     "Have a project in mind? Want to hire me for your business website? Feel free to reach out. I'm always happy to discuss new opportunities!";
@@ -126,24 +124,6 @@ const Contact = () => {
           <div className="flex flex-col justify-center">
             <p className="text-muted-foreground mb-8 leading-relaxed">{blurb}</p>
             <div className="flex gap-4">
-              <a
-                href={github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-lg bg-card border border-border text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
-                aria-label="GitHub"
-              >
-                <Github size={22} />
-              </a>
-              <a
-                href={linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 rounded-lg bg-card border border-border text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={22} />
-              </a>
               {profile?.email && (
                 <a
                   href={`mailto:${profile.email}`}
