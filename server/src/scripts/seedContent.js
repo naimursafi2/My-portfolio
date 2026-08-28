@@ -93,8 +93,8 @@ const PROFILE = {
   ],
   contactBlurb:
     "Have a project in mind? Want to hire me for your business website? Feel free to reach out - I am always happy to discuss new opportunities.",
-  github: "https://github.com",
-  linkedin: "https://linkedin.com",
+  github: "https://github.com/naimursafi2",
+  linkedin: "https://www.linkedin.com/in/naimur-safi-ab587a261/",
 };
 
 /**

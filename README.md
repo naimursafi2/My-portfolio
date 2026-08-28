@@ -2,7 +2,8 @@
 
 A personal portfolio with a content-managed backend. The public site reads all of its
 content from a REST API, and the owner edits that content from a password-protected
-admin dashboard - no code changes needed.
+admin dashboard - no code changes needed. Projects are shown in a draggable, autoplaying
+carousel (mouse drag, touch swipe, hover-to-reveal arrows) built on Embla Carousel.
 
 ```
 my-portfolio/
@@ -78,7 +79,8 @@ The dashboard manages:
 - **Projects** - add, edit, delete, reorder, upload an image or paste an image URL
 - **Skills** - add, edit, delete, reorder (names only, no percentages)
 - **Messages** - everything submitted through the contact form, with read/unread and reply
-- **Profile** - hero text, about paragraphs, contact blurb, social links
+- **Profile** - hero text, about paragraphs, contact blurb, GitHub and LinkedIn links
+  (the footer's Facebook icon is a fixed link set in `Footer.jsx`, not yet admin-editable)
 - **Security** - change the admin password (current password must be verified first)
 
 Changes appear on the public site on its next load.
