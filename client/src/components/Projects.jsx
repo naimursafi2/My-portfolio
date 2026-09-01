@@ -86,26 +86,34 @@ const ProjectsCarousel = ({ list }) => {
   });
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
+  // One entry per snap point, which with loop:true is one per project - so the
+  // dots double as a count of how many projects there are.
+  const [scrollSnaps, setScrollSnaps] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const autoplayRef = useRef(null);
   const hoveringRef = useRef(false);
   const interactingRef = useRef(false);
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
-
   const onSelect = useCallback((api) => {
     setCanPrev(api.canScrollPrev());
     setCanNext(api.canScrollNext());
+    setSelectedIndex(api.selectedScrollSnap());
   }, []);
 
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect(emblaApi);
+
+    const onReInit = (api) => {
+      setScrollSnaps(api.scrollSnapList());
+      onSelect(api);
+    };
+
+    onReInit(emblaApi);
     emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
+    emblaApi.on("reInit", onReInit);
     return () => {
       emblaApi.off("select", onSelect);
-      emblaApi.off("reInit", onSelect);
+      emblaApi.off("reInit", onReInit);
     };
   }, [emblaApi, onSelect]);
 
@@ -124,6 +132,26 @@ const ProjectsCarousel = ({ list }) => {
       emblaApi.scrollNext();
     }, AUTOPLAY_DELAY);
   }, [emblaApi, stopAutoplay]);
+
+  // Every manual move restarts the timer, so the slide someone just picked
+  // gets a full turn instead of being swept away a moment later.
+  const scrollPrev = useCallback(() => {
+    emblaApi?.scrollPrev();
+    startAutoplay();
+  }, [emblaApi, startAutoplay]);
+
+  const scrollNext = useCallback(() => {
+    emblaApi?.scrollNext();
+    startAutoplay();
+  }, [emblaApi, startAutoplay]);
+
+  const scrollTo = useCallback(
+    (index) => {
+      emblaApi?.scrollTo(index);
+      startAutoplay();
+    },
+    [emblaApi, startAutoplay]
+  );
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -183,6 +211,33 @@ const ProjectsCarousel = ({ list }) => {
       >
         <ChevronRight size={20} />
       </button>
+
+      {scrollSnaps.length > 1 && (
+        <div className="flex flex-wrap items-center justify-center gap-1 mt-8">
+          {scrollSnaps.map((_, i) => {
+            const active = i === selectedIndex;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => scrollTo(i)}
+                aria-label={`Go to project ${i + 1} of ${scrollSnaps.length}`}
+                aria-current={active ? "true" : undefined}
+                // Padding keeps the tap target comfortable while the visible dot stays small.
+                className="p-2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <span
+                  className={`block h-2 rounded-full transition-all duration-300 ${
+                    active
+                      ? "w-6 bg-primary"
+                      : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+                  }`}
+                />
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -197,6 +252,11 @@ const Projects = () => {
         <div className="flex items-center gap-3 mb-4">
           <Folder className="text-primary" size={24} />
           <h2 className="font-display text-3xl font-bold">Projects</h2>
+          {list.length > 0 && (
+            <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold tabular-nums">
+              {list.length} {list.length === 1 ? "Project" : "Projects"}
+            </span>
+          )}
         </div>
         <p className="text-muted-foreground mb-12 max-w-2xl">
           A selection of things I have designed and built.
